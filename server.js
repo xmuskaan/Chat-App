@@ -1,6 +1,6 @@
 const { GraphQLServer} = require('graphql-yoga');
 const { PubSub } = require('graphql-subscriptions');
-const messages =[];
+
 const pubsub = new PubSub();
 
 
@@ -21,9 +21,11 @@ const typeDefs= `
     }
 
     type Subscription{
-        messages:[Message!]
+        newmessages:[Message!]
     }
 `
+
+const messages =[];
 const subscribers =[];
 const onMessagesUpdates = (fn) => subscribers.push(fn);
 
@@ -44,7 +46,7 @@ const resolvers = {
         }
     },
     Subscription: {
-        messages: {
+        newmessages: {
             subscribe: (parent, args, {pubsub}) => {
                 const channel = Math.random().toString(36).slice(2,15);
                 onMessagesUpdates(() => pubsub.publish(channel, { messages }) );
